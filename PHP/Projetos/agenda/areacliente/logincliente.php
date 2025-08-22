@@ -8,7 +8,7 @@ session_start();
 if($_SERVER['REQUEST_METHOD']=='POST'){
     // COLETA OS DADOS DO CAMPO DE TEXTO DO HTML
     $clientecpf = $_POST['txtcpf'];
-    $senha = sha1($_POST['txtsenha']);
+    $senha = $_POST['txtsenha'];
 
     // VERIFICAR SE CLIENTE EXISTE
     $sqlcli = "SELECT COUNT(CLI_ID) from clientes 

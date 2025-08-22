@@ -1,142 +1,214 @@
 <?php
-
 include("../utils/conectadb.php");
 include("../utils/validacliente.php");
-include("../utils/verificaagenda.php");
 
 // COLETANDO O SERVIÇO SELECIONADO DO CATALOGO
-$id = $_GET['id'];
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 $sql = "SELECT * FROM catalogo WHERE CAT_ID = '$id'";
 $enviaquery = mysqli_query($link, $sql);
-
-while($tbl = mysqli_fetch_array($enviaquery)){
-    $id = $tbl[0];
-    $nomeservico = $tbl[1];
+if (!$enviaquery || mysqli_num_rows($enviaquery) === 0) {
+    die("Serviço não encontrado.");
+}
+while ($tbl = mysqli_fetch_array($enviaquery)) {
+    $id            = (int)$tbl[0];
+    $nomeservico   = $tbl[1];
     $descricaoservico = $tbl[2];
-    $precoservico = $tbl[3];
-    $temposervico = $tbl[4];
-    $ativo = $tbl[5];
-    $imagem_atual = $tbl[6];
+    $precoservico  = (float)$tbl[3];
+    $temposervico  = (int)$tbl[4]; // minutos
+    $ativo         = $tbl[5];
+    $imagem_atual  = $tbl[6];
 }
 
-// COLETA CABELEIREIRO
-$sqlfuncionario = "SELECT FUN_ID, FUN_NOME FROM funcionarios 
-    WHERE FUN_NOME != 'Administrador'";
+// COLETA CABELEIREIRO (exceto Admin)
+$sqlfuncionario = "SELECT FUN_ID, FUN_NOME FROM funcionarios WHERE FUN_NOME != 'Administrador'";
 $enviaqueryfun = mysqli_query($link, $sqlfuncionario);
-
-// VERIFICA AGENDA
-
-
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/catalogo.css">
-    <link rel="stylesheet" href="../css/global.css">
-    <link href="https://fonts.cdnfonts.com/css/master-lemon" rel="stylesheet">
-    <title>CADASTRO DE SERVIÇOS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="../css/catalogo.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link href="https://fonts.cdnfonts.com/css/master-lemon" rel="stylesheet">
+  <title>Agendamento de Serviços</title>
+  <style>
+    .login { max-width: 480px; }
+    .login select, .login input[type="date"] { width: 100%; padding: 8px; margin: 6px 0; }
+    .hint { font-size: 12px; color: #666; margin-top: 4px; white-space: pre-wrap; }
+    .erro { color: #b00020; }
+  </style>
 </head>
 <body>
-    <div class="global">
-        <!-- AJUSTE DA IMAGEM A PARTE -->
-        <div class='imagem'>
-            
-            <img name='imagem_atual' src="data:image/jpeg;base64,<?= $imagem_atual?>">
-        
-        </div>
-        
-        <div class="formulario">
-<!-- FIRULAS Y FIRULAS -->
- 
-            <a href="catalogo.php"><img src='../icons/arrow47.png' width=50 height=50 ></a>
-            
-            <form class='login' action="servico_altera.php" method="post" enctype="multipart/form-data">
-                
-                <!-- QUANDO GRAVAR, ELE COLETA O QUE VEIO DO BANCO PRA FAZER O UPDATE CORRETO -->
-                <input type='hidden' name='id' value='<?= $id ?>'>
+<div class="global">
 
-                <label><b>NOME DO SERVIÇO</b></label>
-                <label name='txtnome'><?= $nomeservico ?></label>
-                <br>
-                <label><b>DESCRIÇÃO</b></label>
-                <label name='txtdescricao'><?= $descricaoservico?></label>
-                <br>
-                <label><b>PREÇO</b></label>
-                <label name='txtpreco'>R$ <?= $precoservico?></label>
-                <br>
-                <label><b>DURAÇÃO (Em Minutos)</b>  </label>
-                <!-- <input type='number' name='txttempo' placeholder='Digite o tempo em Minutos' value='' required> -->
-                <label><?= $temposervico <= 59? $temposervico." Minutos": ($temposervico / 60)." Hora(s)"?> </label> <!--COLETA TEMPO DO CAT [4]-->
-                <br>
-                <input type='submit' value='AGENDAR'>    
-            </form>
-                <!-- SELECIONA O CABELEIREIRO -->
-                <!-- CRIAR UM FORM DE VERIFICA HORARIO -->
-                <form class='login' action='../utils/verificaagenda.php' method="post" onchange="this.form.submit()">
-                    <select class='opt' name='idfuncionario' >
-                        <option value='sem funcionario'>SELECIONE UM CABELEIREIRO</option>
-                        
-                        <!-- PREENCHENDO LISTA -->
-                        <?php while($funcionario = mysqli_fetch_array($enviaqueryfun)){ ?>
-                            <option value='<?= $funcionario[0]?>'>
-                                <?= $funcionario[1]?>
-                            </option>
-                        <?php } ?> 
-                    </select>
-                    
-                    <br>
-                    <!-- COLETA DATA -->
-                    <input type='date' name='data'>
-                    
-                    <br>
-                    <!-- COLETA HORA -->
-                    <!-- SELECT OPTION LISTA DE OPÇÕES  -->
-                    <!-- RESPEITA O FORMATO DE HORA 00:00:00 -->
-                    <select class='opt' name="horario">
-                        <option value="08:00:00">08:00</option>
-                        <option value="08:30:00">08:30</option>
-                        <option value="09:00:00">09:00</option>
-                        <option value="09:30:00">09:30</option>
-                        <option value="10:00:00">10:00</option>
-                        <option value="10:30:00">10:30</option>
-                        <option value="11:00:00">11:00</option>
-                        <option value="11:30:00">11:30</option>
-                        <option value="12:00:00">12:00</option>
-                        <option value="12:30:00">12:30</option>
-                        <option value="13:00:00">13:00</option>
-                        <option value="13:30:00">13:30</option>
-                        <option value="7">14:00</option>
-                        <option value="14:30:00">14:30</option>
-                        <option value="15:00:00">15:00</option>
-                        <option value="15:30:00">15:30</option>
-                        <option value="16:00:00">16:00</option>
-                        <option value="16:30:00">16:30</option>
-                        <option value="17:00:00">17:00</option>
-                        <option value="17:30:00">17:30</option>
-                        <option value="18:00:00">18:00</option>
-                        <option value="18:30:00">18:30</option>
-                        <option value="19:00:00">19:00</option>
-                        <option value="19:30:00">19:30</option>
-                        <option value="20:00:00">20:00</option>
-                        <option value="20:30:00">20:30</option>
-                        <option value="21:00:00">21:00</option>
-                    </select>
-                            <input type='submit' value='VERIFICAR '>
-                </form>
-                
-                <br>
-           
-            <br>
-        </div>
-        
+  <!-- IMAGEM DO SERVIÇO -->
+  <div class="imagem">
+    <img alt="Imagem do serviço" src="data:image/jpeg;base64,<?= $imagem_atual ?>">
+  </div>
 
-    </div>
+  <div class="formulario">
 
+    <a href="catalogo.php"><img src="../icons/arrow47.png" width="50" height="50" alt="Voltar"></a>
+
+    <!-- DETALHES DO SERVIÇO -->
+    <form class="login" action="#" method="post" onsubmit="return false;">
+      <input type="hidden" id="cat_id" value="<?= $id ?>">
+      <input type="hidden" id="duracao" value="<?= $temposervico ?>"> <!-- minutos -->
+
+      <label><b>NOME DO SERVIÇO</b></label>
+      <div><?= htmlspecialchars($nomeservico) ?></div>
+      <br>
+
+      <label><b>DESCRIÇÃO</b></label>
+      <div><?= htmlspecialchars($descricaoservico) ?></div>
+      <br>
+
+      <label><b>PREÇO</b></label>
+      <div>R$ <?= number_format($precoservico, 2, ',', '.') ?></div>
+      <br>
+
+      <label><b>DURAÇÃO</b></label>
+      <div>
+        <?= $temposervico <= 59 ? $temposervico . " minuto(s)" : number_format($temposervico/60, 1, ',', '.') . " hora(s)" ?>
+      </div>
+    </form>
+
+    <!-- FORM DE AGENDAMENTO -->
+    <form class="login" id="formAgendamento" method="post" action="#">
+      <label for="idfuncionario"><b>Profissional</b></label>
+      <select class="opt" name="idfuncionario" id="idfuncionario" required>
+        <option value="">SELECIONE UM CABELEIREIRO</option>
+        <?php while ($func = mysqli_fetch_array($enviaqueryfun)) { ?>
+          <option value="<?= (int)$func[0] ?>"><?= htmlspecialchars($func[1]) ?></option>
+        <?php } ?>
+      </select>
+
+      <label for="data"><b>Data</b></label>
+      <input type="date" name="data" id="data" required>
+      <div class="hint">Os horários passados de hoje não serão exibidos.</div>
+
+      <label for="horario"><b>Horário disponível</b></label>
+      <select class="opt" name="horario" id="horario" required>
+        <option value="">Selecione um horário</option>
+      </select>
+
+      <br>
+      <input type="submit" value="AGENDAR">
+    </form>
+
+    <div id="msg" class="hint"></div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const funcionario = document.getElementById("idfuncionario");
+  const dataInput   = document.getElementById("data");
+  const horarioSel  = document.getElementById("horario");
+  const duracaoMin  = parseInt(document.getElementById("duracao").value || "30", 10);
+  const catId       = document.getElementById("cat_id").value;
+  const msgBox      = document.getElementById("msg");
+
+  function setMsg(text, isError=false) {
+    msgBox.textContent = text || "";
+    msgBox.className = "hint" + (isError ? " erro" : "");
+  }
+
+  // Carrega horários quando escolher profissional e data
+  function carregarHorarios() {
+    const idfunc = funcionario.value;
+    const data = dataInput.value;
+
+    horarioSel.innerHTML = "<option value=''>Carregando...</option>";
+    setMsg("");
+
+    if (!idfunc || !data) {
+      horarioSel.innerHTML = "<option value=''>Selecione o cabeleireiro e a data</option>";
+      return;
+    }
+
+    const body = new URLSearchParams({
+      idfuncionario: idfunc,
+      data: data,
+      duracao: duracaoMin.toString(),
+      cat_id: catId
+    });
+
+    fetch("../utils/verificaagenda.php", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body
+    })
+    .then(async (r) => {
+      const ct = r.headers.get("content-type") || "";
+      const raw = await r.text(); // primeiro como texto
+      // tenta parsear JSON; se falhar, mostra o HTML bruto para debug
+      try {
+        const json = JSON.parse(raw);
+        return { ok: r.ok, json, raw };
+      } catch (e) {
+        throw new Error("Resposta não-JSON do servidor:\n" + raw);
+      }
+    })
+    .then(({ json }) => {
+      // Aceita formato: ARRAY ["HH:MM:SS", ...] ou OBJ {ok, horarios, error, debug}
+      let lista = [];
+      if (Array.isArray(json)) {
+        lista = json;
+      } else if (json && Array.isArray(json.horarios)) {
+        if (json.error) setMsg("Aviso: " + json.error, true);
+        if (json.debug) setMsg((msgBox.textContent ? msgBox.textContent + "\n" : "") + "Debug: " + json.debug, true);
+        lista = json.horarios;
+      } else {
+        const msg = (json && (json.error || json.message)) || "Formato inesperado de resposta.";
+        throw new Error(msg);
+      }
+
+      horarioSel.innerHTML = "";
+      if (lista.length) {
+        const first = document.createElement("option");
+        first.value = "";
+        first.textContent = "Selecione um horário";
+        horarioSel.appendChild(first);
+
+        lista.forEach(h => {
+          const opt = document.createElement("option");
+          opt.value = h;                 // "HH:MM:SS"
+          opt.textContent = h.substring(0,5); // "HH:MM"
+          horarioSel.appendChild(opt);
+        });
+      } else {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Nenhum horário disponível";
+        horarioSel.appendChild(opt);
+        setMsg("Não há horários livres para os filtros selecionados.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      horarioSel.innerHTML = "<option value=''>Erro ao carregar horários</option>";
+      setMsg(String(err.message || err), true);
+    });
+  }
+
+  funcionario.addEventListener("change", carregarHorarios);
+  dataInput.addEventListener("change", carregarHorarios);
+
+  // (Exemplo) Evita submit real
+  document.getElementById("formAgendamento").addEventListener("submit", (e) => {
+    if (!horarioSel.value) {
+      e.preventDefault();
+      setMsg("Escolha um horário antes de agendar.", true);
+      return;
+    }
+    e.preventDefault();
+    setMsg("Ok! (Simulação) — aqui você faria o agendamento no banco.");
+  });
+});
+</script>
 </body>
 </html>
