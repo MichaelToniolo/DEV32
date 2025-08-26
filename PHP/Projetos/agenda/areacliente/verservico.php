@@ -58,21 +58,21 @@ $enviaqueryfun = mysqli_query($link, $sqlfuncionario);
       <input type="hidden" id="duracao" value="<?= $temposervico ?>"> <!-- minutos -->
 
       <label><b>NOME DO SERVIÇO</b></label>
-      <div><?= htmlspecialchars($nomeservico) ?></div>
+      <label><?= htmlspecialchars($nomeservico) ?></label>
       <br>
 
       <label><b>DESCRIÇÃO</b></label>
-      <div><?= htmlspecialchars($descricaoservico) ?></div>
+      <label><?= htmlspecialchars($descricaoservico) ?></label>
       <br>
 
       <label><b>PREÇO</b></label>
-      <div>R$ <?= number_format($precoservico, 2, ',', '.') ?></div>
+      <label>R$ <?= number_format($precoservico, 2, ',', '.') ?></label>
       <br>
 
       <label><b>DURAÇÃO</b></label>
-      <div>
+      <label>
         <?= $temposervico <= 59 ? $temposervico . " minuto(s)" : number_format($temposervico/60, 1, ',', '.') . " hora(s)" ?>
-      </div>
+      </label>
     </form>
 
     <!-- FORM DE AGENDAMENTO -->
