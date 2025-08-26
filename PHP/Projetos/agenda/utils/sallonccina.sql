@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 15-Ago-2025 às 14:22
+-- Tempo de geração: 25-Ago-2025 às 20:29
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `sallonccina`
 --
-CREATE DATABASE sallonccina;
+
 -- --------------------------------------------------------
 
 --
@@ -29,12 +29,20 @@ CREATE DATABASE sallonccina;
 
 CREATE TABLE `agenda` (
   `AG_ID` int(11) NOT NULL,
-  `AG_HORA` datetime NOT NULL,
+  `AG_HORA` time NOT NULL,
+  `AG_DATA` date NOT NULL,
   `AG_STATUS` char(1) NOT NULL,
   `FK_CLI_ID` int(11) NOT NULL,
   `FK_CAT_ID` int(11) NOT NULL,
   `FK_FUN_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Extraindo dados da tabela `agenda`
+--
+
+INSERT INTO `agenda` (`AG_ID`, `AG_HORA`, `AG_DATA`, `AG_STATUS`, `FK_CLI_ID`, `FK_CAT_ID`, `FK_FUN_ID`) VALUES
+(1, '14:00:00', '2025-08-29', '0', 2, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -200,7 +208,7 @@ ALTER TABLE `venda`
 -- AUTO_INCREMENT de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  MODIFY `AG_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `AG_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `catalogo`
