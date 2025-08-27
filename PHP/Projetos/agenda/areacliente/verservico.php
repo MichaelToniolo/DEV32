@@ -3,9 +3,10 @@ include("../utils/conectadb.php");
 include("../utils/validacliente.php");
 
 // COLETANDO O SERVIÇO SELECIONADO DO CATALOGO
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id = isset($_GET['id']) ? intval($_GET['id']) : $_POST['id'];
 
 $sql = "SELECT * FROM catalogo WHERE CAT_ID = '$id'";
+
 $enviaquery = mysqli_query($link, $sql);
 if (!$enviaquery || mysqli_num_rows($enviaquery) === 0) {
     die("Serviço não encontrado.");
@@ -23,6 +24,42 @@ while ($tbl = mysqli_fetch_array($enviaquery)) {
 // COLETA CABELEIREIRO (exceto Admin)
 $sqlfuncionario = "SELECT FUN_ID, FUN_NOME FROM funcionarios WHERE FUN_NOME != 'Administrador'";
 $enviaqueryfun = mysqli_query($link, $sqlfuncionario);
+
+// FUNÇÃO DE AGENDAMENTO
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+  // VERIFICAR SE NOME DO COYÓ VEM NA VARIÁVEL
+  if($nomecliente != null){
+
+    // COLETAR OS INPUTS
+    // COLETANDO ID DO SERVIÇO
+    $idservico = $_POST['id'];
+    // COLETANDO ID DO FUNCIONARIO
+    $idfuncionario =$_POST['idfuncionario'];
+    //COLETANDO DATA DO AGENDAMENTO
+    $dataagenda = $_POST['data'];
+    // COLETANDO HORA DO AGENDAMENTO
+    $horaagenda = $_POST['horario'];
+
+    // GRAVAR NO BANQUINHO
+    $sqlagendar = "INSERT INTO agenda 
+    (AG_HORA, AG_DATA, AG_STATUS, FK_CLI_ID, FK_CAT_ID, FK_FUN_ID)
+    VALUES 
+    ('$horaagenda', '$dataagenda', 1, $idcliente, $id, $idfuncionario)";
+    mysqli_query($link, $sqlagendar);
+  }
+  else{
+    echo"<script>window.alert('FAVOR LOGAR COYÓ');</script>";
+    echo"<script>window.location.href='logincliente.php';</script>";
+  }
+}
+
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -76,7 +113,9 @@ $enviaqueryfun = mysqli_query($link, $sqlfuncionario);
     </form>
 
     <!-- FORM DE AGENDAMENTO -->
-    <form class="login" id="formAgendamento" method="post" action="#">
+    <form class="login" id="formAgendamento" method="post" action="verservico.php">
+      <input type='hidden' name='id' value='<?= $id?>'>
+    ''
       <label for="idfuncionario"><b>Profissional</b></label>
       <select class="opt" name="idfuncionario" id="idfuncionario" required>
         <option value="">SELECIONE UM CABELEIREIRO</option>
@@ -205,8 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setMsg("Escolha um horário antes de agendar.", true);
       return;
     }
-    e.preventDefault();
-    setMsg("Ok! (Simulação) — aqui você faria o agendamento no banco.");
+
   });
 });
 </script>

@@ -52,7 +52,9 @@ else{
 
             <div class='menus'>
                 <!-- OS CARDS DE MENU -->
-                
+                 <!-- VERIFICA E MOSTRA TODOS OS CARDS PARA ADMINISTRADOR -->
+                <?php if($idfuncionario == 1){
+                    ?>
 
                 <div class="menu2">
                     <a href="servico_cadastra.php"><img src ='icons/th2.png' width="200" height="200"></a>
@@ -73,7 +75,7 @@ else{
                     <label>Funcionários e Usuários</label>
                 </div>
 
-                  <div class="menu6">
+                <div class="menu6">
                     <a href="cliente_cadastra.php"><img src ='icons/add9.png' width="200" height="200"></a>
                     <label>Cadastrar Clientes</label>
                 </div>
@@ -83,8 +85,27 @@ else{
                     <label>Listar Clientes</label>
                 </div>
 
+                <!-- AQUI SÓ MOSTRA 3 CARDS PARA QUEM NÃO É ADMIN -->
+                <?php } else {?>
+                
+                <div class="menu1">
+                    <a href="servico_lista.php"><img src ='icons/add9.png' width="200" height="200"></a>
+                    <label>Lista Serviços</label>
+
+                </div>
+                
+                <div class="menu6">
+                    <a href="cliente_cadastra.php"><img src ='icons/add9.png' width="200" height="200"></a>
+                    <label>Cadastrar Clientes</label>
+                </div>
+
+                <div class="menu5">
+                    <a href="cliente_lista.php"><img src ='icons/th.png' width="200" height="200"></a>
+                    <label>Listar Clientes</label>
+                </div>
               
             </div>
+            <?php } ?>
     </div>
     
 </body>
