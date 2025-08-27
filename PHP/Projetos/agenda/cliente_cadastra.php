@@ -4,6 +4,8 @@
 include("utils/conectadb.php");
 include("utils/verificalogin.php");
 
+
+
 //APÓS O VAMOS CADASTRAR O FUN E O USU AO MESMO TEMPO
 if($_SERVER['REQUEST_METHOD']=='POST'){
     
@@ -44,6 +46,9 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         echo("<script>window.alert('CLIENTE ALASTRADO COM SUCESSO!');</script>");
     }
 }
+
+
+
 ?>
 
 <!DOCTYPE html>

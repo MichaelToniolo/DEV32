@@ -5,80 +5,87 @@ include("utils/conectadb.php");
 include("utils/verificalogin.php");
 
 
-//APÓS O VAMOS CADASTRAR O FUN E O USU AO MESMO TEMPO
-if($_SERVER['REQUEST_METHOD']=='POST'){
-    
-    // COLETAR CAMPOS DOS INPUTS POR NAMES PARA VARIÁVEIS PHPs
-    $nomefun = $_POST['txtnome'];
-    $cpffun = $_POST['txtcpf'];
-    $funcaofun = $_POST['txtfuncao'];
-    $contatofun = $_POST['txtcontato'];
-    $ativofun = $_POST['ativo'];
+if($idfuncionario == 1){
 
-    // COLETA PARA O USUARIO
-    $usulogin = $_POST['txtusuario'];
-    $ususenha = $_POST['txtsenha'];
-
-    // INICIANDO QUERIES DE BANCO
-    // VERIFICANDO SE O USUARIO EXISTE
-    $sql = "SELECT COUNT(fun_cpf) FROM funcionarios
-    WHERE fun_cpf = '$cpffun'";
-    
-    // ENVIANDO A QUERY PARA O BANQUINHO
-    $enviaquery = mysqli_query($link, $sql);
-    // RETORNO DO QUE VEM DO BANCO
-    $retorno = mysqli_fetch_array($enviaquery) [0];
-
-    // VALIDAÇÃO DO RETORNO
-    if($retorno == 1){
-        // INFORMA QUE O USUARIO JÁ EXISTE POIS RETORNO = 1
-        echo("<script>window.alert('FUNCIONARIO JÁ EXISTE');</script>");
-
-    }
-    else{
-        // CASO FUNCIONÁRIO NÃO ESTEJA CADASTRADO
-        $sql = "INSERT INTO funcionarios (FUN_NOME, FUN_CPF, FUN_FUNCAO, FUN_TEL, FUN_ATIVO)
-        VALUES ('$nomefun', '$cpffun', '$funcaofun', '$contatofun', $ativofun )";
-
-        // CONECTA COM O BANCO E MANDA A QUERY
-        $enviaquery = mysqli_query($link, $sql);
-
-        // ROLE COM A TABELA DE USUARIOS
-        // PERGUNTA PARA A TABELA DE FUNCIONÁRIO QUAL FOI O ULTIMO ID CADASTRADO
-        // ANTES PRECISO SABER SE A VARIÁVEL USUFUN ESTÁ PREENCHIDA
-        if($usulogin != null){
-            // TRAZ O ID DO FUNCIONARIO CADASTRADO PARA PASSAR NO LOGIN
-            $sql = "SELECT FUN_ID FROM funcionarios where FUN_CPF = '$cpffun'";
-            $enviaquery = mysqli_query($link, $sql);
-            $retorno = mysqli_fetch_array($enviaquery) [0];
-
-            // AGORA SALVAMOS TUDO NA TABELA DO USUARIO
-            $sqlusu = "INSERT INTO usuarios (USU_LOGIN, USU_SENHA, FK_FUN_ID, USU_ATIVO)
-            VALUES ('$usulogin', '$ususenha', $retorno, $ativofun)";
-            $enviaqueryusu = mysqli_query($link, $sqlusu);
-        }
-        else {
-            
-            // TRAZ O ID DO FUNCIONARIO CADASTRADO PARA PASSAR NO LOGIN
-            $sql = "SELECT FUN_ID FROM funcionarios where FUN_CPF = '$cpffun'";
-            $enviaquery = mysqli_query($link, $sql);
-            $retorno = mysqli_fetch_array($enviaquery) [0];
-
-
-            $usulogin = "Sem Cadastro";
-            $ususenha = "Sem Cadastro";
-            $ativofun = "0";
-            $sqlusu = "INSERT INTO usuarios (USU_LOGIN, USU_SENHA, FK_FUN_ID, USU_ATIVO)
-            VALUES ('$usulogin', '$ususenha', $retorno, $ativofun)";
-            $enviaqueryusu = mysqli_query($link, $sqlusu);
-        }
+    //APÓS O VAMOS CADASTRAR O FUN E O USU AO MESMO TEMPO
+    if($_SERVER['REQUEST_METHOD']=='POST'){
         
-        echo("<script>window.alert('FUNCIONARIO ALASTRADO COM SUCESSO!');</script>");
+        // COLETAR CAMPOS DOS INPUTS POR NAMES PARA VARIÁVEIS PHPs
+        $nomefun = $_POST['txtnome'];
+        $cpffun = $_POST['txtcpf'];
+        $funcaofun = $_POST['txtfuncao'];
+        $contatofun = $_POST['txtcontato'];
+        $ativofun = $_POST['ativo'];
+
+        // COLETA PARA O USUARIO
+        $usulogin = $_POST['txtusuario'];
+        $ususenha = $_POST['txtsenha'];
+
+        // INICIANDO QUERIES DE BANCO
+        // VERIFICANDO SE O USUARIO EXISTE
+        $sql = "SELECT COUNT(fun_cpf) FROM funcionarios
+        WHERE fun_cpf = '$cpffun'";
+        
+        
+
+
+        // ENVIANDO A QUERY PARA O BANQUINHO
+        $enviaquery = mysqli_query($link, $sql);
+        // RETORNO DO QUE VEM DO BANCO
+        $retorno = mysqli_fetch_array($enviaquery) [0];
+
+        // VALIDAÇÃO DO RETORNO
+        if($retorno == 1){
+            // INFORMA QUE O USUARIO JÁ EXISTE POIS RETORNO = 1
+            echo("<script>window.alert('FUNCIONARIO JÁ EXISTE');</script>");
+
+        }
+        else{
+                // CASO FUNCIONÁRIO NÃO ESTEJA CADASTRADO
+                $sql = "INSERT INTO funcionarios (FUN_NOME, FUN_CPF, FUN_FUNCAO, FUN_TEL, FUN_ATIVO)
+                VALUES ('$nomefun', '$cpffun', '$funcaofun', '$contatofun', $ativofun )";
+
+                // CONECTA COM O BANCO E MANDA A QUERY
+                $enviaquery = mysqli_query($link, $sql);
+
+                // ROLE COM A TABELA DE USUARIOS
+                // PERGUNTA PARA A TABELA DE FUNCIONÁRIO QUAL FOI O ULTIMO ID CADASTRADO
+                // ANTES PRECISO SABER SE A VARIÁVEL USUFUN ESTÁ PREENCHIDA
+                    if($usulogin != null){
+                        // TRAZ O ID DO FUNCIONARIO CADASTRADO PARA PASSAR NO LOGIN
+                        $sql = "SELECT FUN_ID FROM funcionarios where FUN_CPF = '$cpffun'";
+                        $enviaquery = mysqli_query($link, $sql);
+                        $retorno = mysqli_fetch_array($enviaquery) [0];
+
+                        // AGORA SALVAMOS TUDO NA TABELA DO USUARIO
+                        $sqlusu = "INSERT INTO usuarios (USU_LOGIN, USU_SENHA, FK_FUN_ID, USU_ATIVO)
+                        VALUES ('$usulogin', '$ususenha', $retorno, $ativofun)";
+                        $enviaqueryusu = mysqli_query($link, $sqlusu);
+                    }
+            else {
+                
+                // TRAZ O ID DO FUNCIONARIO CADASTRADO PARA PASSAR NO LOGIN
+                $sql = "SELECT FUN_ID FROM funcionarios where FUN_CPF = '$cpffun'";
+                $enviaquery = mysqli_query($link, $sql);
+                $retorno = mysqli_fetch_array($enviaquery) [0];
+
+
+                $usulogin = "Sem Cadastro";
+                $ususenha = "Sem Cadastro";
+                $ativofun = "0";
+                $sqlusu = "INSERT INTO usuarios (USU_LOGIN, USU_SENHA, FK_FUN_ID, USU_ATIVO)
+                VALUES ('$usulogin', '$ususenha', $retorno, $ativofun)";
+                $enviaqueryusu = mysqli_query($link, $sqlusu);
+            }
+            
+            echo("<script>window.alert('FUNCIONARIO ALASTRADO COM SUCESSO!');</script>");
+        }
+
     }
-
-
-
-
+}
+else{
+    echo"<script>window.alert('NOPE');</script>";
+    echo"<script>window.location.href='backoffice.php';</script>";
 }
 ?>
 
