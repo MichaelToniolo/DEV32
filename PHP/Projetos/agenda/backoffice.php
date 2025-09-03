@@ -21,6 +21,26 @@ else{
     echo"<script>window.location.href='login.php';</script>";
 
 }
+//                     <th>ID SERVIÇO</th>
+//                     <th>NOME SERVIÇO</th>
+//                     <th>DATA SERVIÇO</th>
+//                     <th>HORA SERVIÇO</th>
+//                     <th>CLIENTE</th>
+//                     <th>FUNCIONÁRIO</th>
+//                     <th>IMAGEM</th>
+
+
+// [TO DO] ALIMENTAÇÃO DA TABELA DE AGENDAMENTOS
+    $sqlagenda = "SELECT FK_CAT_ID, CAT_NOME, AG_DATA, AG_HORA, CLI_NOME, FUN_NOME, CAT_IMAGEM
+    FROM agenda
+    INNER JOIN catalogo ON FK_CAT_ID = CAT_ID
+    INNER JOIN clientes ON FK_CLI_ID = CLI_ID
+    INNER JOIN funcionarios ON FK_FUN_ID = FUN_ID
+    WHERE FUN_ID = $idfuncionario AND AG_DATA = CURRENT_DATE()";
+
+    $enviaqueryagenda = mysqli_query($link, $sqlagenda);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +50,7 @@ else{
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- APONTA OS CSS ENVOLVIDOS -->
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/lista.css">
     <title>BACKOFFICE</title>
 </head>
 <body>
@@ -106,6 +127,49 @@ else{
               
             </div>
             <?php } ?>
+
+
+            <br>
+            <br>
+            <!-- AQUI SERÁ A TABELA DE AGENDAMENTO -->
+            <!-- ADMIN VÊ AGENDAMENTOS GERAIS -->
+
+            <!-- FAZER VALIDAÇÃO DO FUNCIONARIO -->
+
+            <!-- AJUSTAR TABELA PARA VISUALIZAR: AGENDA + CORTE + FUN + FOTO* -->
+            <table>
+                <tr> 
+                    <th>ID SERVIÇO</th>
+                    <th>NOME SERVIÇO</th>
+                    <th>DATA SERVIÇO</th>
+                    <th>HORA SERVIÇO</th>
+                    <th>CLIENTE</th>
+                    <th>FUNCIONÁRIO</th>
+                    <th>IMAGEM</th>
+                </tr>
+
+                <!-- COMEÇOU O PHP -->
+                <?php
+                        while ($tbl = mysqli_fetch_array($enviaqueryagenda)){
+    
+                ?>
+                
+                <tr class='linha'>
+                    <td><?=$tbl['FK_CAT_ID']?></td> <!--COLETA CÓDIGO DO CAT [0] -->
+                    <td><?=$tbl['CAT_NOME']?></td> <!--COLETA NOME DO CAT [1]-->
+                    <td><?=$tbl['AG_DATA']?></td> <!--COLETA DATA DO SERVICO [2]-->
+                    <td><?=$tbl['AG_HORA']?></td> <!--COLETA HORA DO SERVICO[3]-->
+                    <td><?=$tbl['CLI_NOME']?></td> <!--COLETA NOME CLIENTE-->
+                    <td><?=$tbl['FUN_NOME']?></td> <!--COLETA NOME FUN-->
+                     <td><img id='cat_imagem' src='data:image/jpeg;base64,<?=$tbl['CAT_IMAGEM']?>' width=150 height=150></td>
+                    
+                </tr>
+                <?php
+                    }
+                
+                ?>
+            </table>
+
     </div>
     
 </body>
