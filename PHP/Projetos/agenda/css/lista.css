@@ -60,3 +60,13 @@ tr:hover{
     border-radius: 20px;
     border: 5px solid rgb(252, 226, 174);
 }
+
+.listabkoffice
+input[type='date']
+{
+    height: 40px;
+    border-radius: 10px;
+    border: solid 2px #B17871	;
+    background-color: #FFF	;
+    color: rgb(101, 101, 101);
+}
